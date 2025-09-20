@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple To-Do List</title>
+    <title>ES6+ To-Do List</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,65 +24,98 @@
         .todo-container {
             background: white;
             width: 100%;
-            max-width: 500px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             overflow: hidden;
         }
 
         .header {
-            background: #0984e3;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
         }
 
         .input-section {
             padding: 30px;
             border-bottom: 1px solid #eee;
+            background: #f8f9fa;
         }
 
         .input-container {
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         #taskInput {
             flex: 1;
             padding: 15px;
             border: 2px solid #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             outline: none;
+            transition: border-color 0.3s ease;
         }
 
         #taskInput:focus {
-            border-color: #0984e3;
+            border-color: #667eea;
         }
 
         #addButton {
             padding: 15px 25px;
-            background: #00b894;
+            background: #28a745;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
 
         #addButton:hover {
-            background: #00a085;
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: transparent;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
         }
 
         .tasks-section {
             padding: 20px 30px 30px;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
@@ -92,24 +125,25 @@
 
         .task {
             background: #f8f9fa;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 10px;
+            margin: 12px 0;
+            padding: 20px;
+            border-radius: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid #0984e3;
-            transition: all 0.3s;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .task:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
         .task.completed {
-            background: #d1f2eb;
-            border-left-color: #00b894;
+            background: #d4edda;
+            border-left-color: #28a745;
             opacity: 0.8;
         }
 
@@ -118,10 +152,24 @@
             color: #666;
         }
 
-        .task-text {
+        .task-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .task-text {
             font-size: 16px;
             cursor: pointer;
+            font-weight: 500;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            gap: 15px;
         }
 
         .task-buttons {
@@ -129,49 +177,80 @@
             gap: 10px;
         }
 
-        .complete-btn, .delete-btn {
-            padding: 8px 12px;
+        .task-btn {
+            padding: 10px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .complete-btn {
-            background: #00b894;
+            background: #28a745;
             color: white;
         }
 
         .complete-btn:hover {
-            background: #00a085;
+            background: #218838;
+            transform: scale(1.1);
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .edit-btn:hover {
+            background: #e0a800;
+            transform: scale(1.1);
         }
 
         .delete-btn {
-            background: #e17055;
+            background: #dc3545;
             color: white;
         }
 
         .delete-btn:hover {
-            background: #d63031;
+            background: #c82333;
+            transform: scale(1.1);
         }
 
         .stats {
             background: #f8f9fa;
             padding: 20px 30px;
-            text-align: center;
-            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #666;
         }
 
         .empty-message {
             text-align: center;
             color: #999;
             font-style: italic;
-            padding: 40px 20px;
+            padding: 50px 20px;
+            font-size: 18px;
         }
 
-        /* Animation for new tasks */
+        .priority-select {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .priority-high { border-left-color: #dc3545; }
+        .priority-medium { border-left-color: #ffc107; }
+        .priority-low { border-left-color: #28a745; }
+
         @keyframes slideIn {
             from {
                 transform: translateX(-100%);
@@ -184,15 +263,25 @@
         }
 
         .task {
-            animation: slideIn 0.3s ease-out;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .task.editing {
+            animation: pulse 0.5s ease-in-out;
+            border-left-color: #ffc107;
         }
     </style>
 </head>
 <body>
     <div class="todo-container">
         <div class="header">
-            <h1>📝 To-Do List</h1>
-            <p>Stay organized and productive!</p>
+            <h1>🚀 ES6+ To-Do List</h1>
+            <p>Modern JavaScript Task Manager</p>
         </div>
 
         <div class="input-section">
@@ -200,10 +289,22 @@
                 <input 
                     type="text" 
                     id="taskInput" 
-                    placeholder="What do you need to do?"
+                    placeholder="What needs to be done?"
                     maxlength="100"
                 >
-                <button id="addButton">➕ Add</button>
+                <select id="prioritySelect" class="priority-select">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <button id="addButton">➕ Add Task</button>
+            </div>
+            
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn" data-filter="high">High Priority</button>
             </div>
         </div>
 
@@ -212,146 +313,312 @@
                 <!-- Tasks will be added here -->
             </ul>
             <div id="emptyMessage" class="empty-message">
-                🎯 No tasks yet. Add one above to get started!
+                🎯 Ready to be productive? Add your first task above!
             </div>
         </div>
 
         <div class="stats">
             <span id="taskStats">0 tasks • 0 completed</span>
+            <span id="productivityScore">Productivity: 0%</span>
         </div>
     </div>
 
     <script>
-        // Get DOM elements
+        // ============================================
+        // ES6+ TO-DO LIST - MODERN JAVASCRIPT
+        // ============================================
+
+        // ES6: const/let instead of var
         const taskInput = document.getElementById('taskInput');
         const addButton = document.getElementById('addButton');
         const taskList = document.getElementById('taskList');
         const emptyMessage = document.getElementById('emptyMessage');
         const taskStats = document.getElementById('taskStats');
+        const productivityScore = document.getElementById('productivityScore');
+        const prioritySelect = document.getElementById('prioritySelect');
+        const filterButtons = document.querySelectorAll('.filter-btn');
 
-        // Store tasks in an array
-        let tasks = [];
-        let taskId = 1;
-
-        // Add task function
-        function addTask() {
-            const taskText = taskInput.value.trim();
-            
-            // Check if input is not empty
-            if (taskText === '') {
-                alert('Please enter a task!');
-                return;
+        // ES6: Class for Task management
+        class TaskManager {
+            constructor() {
+                this.tasks = [];
+                this.currentFilter = 'all';
+                this.taskId = 1;
             }
 
-            // Create task object
-            const newTask = {
-                id: taskId++,
-                text: taskText,
-                completed: false
-            };
+            // ES6: Arrow function with default parameters
+            createTask = (text, priority = 'medium') => ({
+                id: this.taskId++,
+                text,
+                priority,
+                completed: false,
+                createdAt: new Date(),
+                completedAt: null
+            })
 
-            // Add to tasks array
-            tasks.push(newTask);
+            // ES6: Arrow function with spread operator
+            addTask = (text, priority) => {
+                if (!text.trim()) {
+                    this.showNotification('Please enter a task!', 'error');
+                    return;
+                }
 
-            // Clear input
-            taskInput.value = '';
-
-            // Update display
-            displayTasks();
-            updateStats();
-        }
-
-        // Display all tasks
-        function displayTasks() {
-            // Clear current tasks
-            taskList.innerHTML = '';
-
-            // Check if no tasks
-            if (tasks.length === 0) {
-                emptyMessage.style.display = 'block';
-                return;
+                const newTask = this.createTask(text, priority);
+                this.tasks = [...this.tasks, newTask]; // Spread operator
+                this.render();
+                this.updateStats();
+                this.showNotification('Task added successfully!', 'success');
             }
 
-            emptyMessage.style.display = 'none';
+            // ES6: Array methods with arrow functions
+            toggleTask = (id) => {
+                this.tasks = this.tasks.map(task => 
+                    task.id === id 
+                        ? { ...task, completed: !task.completed, completedAt: task.completed ? null : new Date() }
+                        : task
+                );
+                this.render();
+                this.updateStats();
+            }
 
-            // Create HTML for each task
-            tasks.forEach(task => {
-                const taskElement = document.createElement('li');
-                taskElement.className = `task ${task.completed ? 'completed' : ''}`;
+            // ES6: Filter method with arrow function
+            deleteTask = (id) => {
+                this.tasks = this.tasks.filter(task => task.id !== id);
+                this.render();
+                this.updateStats();
+                this.showNotification('Task deleted!', 'info');
+            }
+
+            // ES6: Template literals and destructuring
+            editTask = (id) => {
+                const task = this.tasks.find(t => t.id === id);
+                if (!task) return;
+
+                const newText = prompt('Edit task:', task.text);
+                if (newText && newText.trim()) {
+                    this.tasks = this.tasks.map(t => 
+                        t.id === id ? { ...t, text: newText.trim() } : t
+                    );
+                    this.render();
+                    this.showNotification('Task updated!', 'success');
+                }
+            }
+
+            // ES6: Computed property names and destructuring
+            getFilteredTasks = () => {
+                const filters = {
+                    all: () => this.tasks,
+                    pending: () => this.tasks.filter(task => !task.completed),
+                    completed: () => this.tasks.filter(task => task.completed),
+                    high: () => this.tasks.filter(task => task.priority === 'high')
+                };
+
+                return filters[this.currentFilter]() || this.tasks;
+            }
+
+            // ES6: Template literals with expressions
+            render = () => {
+                const filteredTasks = this.getFilteredTasks();
                 
-                taskElement.innerHTML = `
-                    <span class="task-text" onclick="toggleTask(${task.id})">
-                        ${task.text}
-                    </span>
-                    <div class="task-buttons">
-                        <button class="complete-btn" onclick="toggleTask(${task.id})">
-                            ${task.completed ? '↺' : '✓'}
-                        </button>
-                        <button class="delete-btn" onclick="deleteTask(${task.id})">
-                            🗑️
-                        </button>
-                    </div>
-                `;
+                if (filteredTasks.length === 0) {
+                    emptyMessage.style.display = 'block';
+                    taskList.innerHTML = '';
+                    return;
+                }
 
-                taskList.appendChild(taskElement);
-            });
-        }
+                emptyMessage.style.display = 'none';
+                
+                // ES6: Template literals and destructuring in map
+                taskList.innerHTML = filteredTasks.map(task => {
+                    const { id, text, completed, priority, createdAt } = task;
+                    const timeAgo = this.getTimeAgo(createdAt);
+                    const priorityEmoji = this.getPriorityEmoji(priority);
+                    
+                    return `
+                        <li class="task ${completed ? 'completed' : ''} priority-${priority}">
+                            <div class="task-content">
+                                <span class="task-text" onclick="taskManager.toggleTask(${id})">
+                                    ${priorityEmoji} ${text}
+                                </span>
+                                <div class="task-meta">
+                                    <span>📅 ${timeAgo}</span>
+                                    <span>🏷️ ${priority.toUpperCase()}</span>
+                                    ${completed ? '<span>✅ Completed</span>' : '<span>⏳ Pending</span>'}
+                                </div>
+                            </div>
+                            <div class="task-buttons">
+                                <button class="task-btn complete-btn" onclick="taskManager.toggleTask(${id})" title="${completed ? 'Mark as incomplete' : 'Mark as complete'}">
+                                    ${completed ? '↺' : '✓'}
+                                </button>
+                                <button class="task-btn edit-btn" onclick="taskManager.editTask(${id})" title="Edit task">
+                                    ✏️
+                                </button>
+                                <button class="task-btn delete-btn" onclick="taskManager.deleteTask(${id})" title="Delete task">
+                                    🗑️
+                                </button>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+            }
 
-        // Toggle task completion
-        function toggleTask(id) {
-            // Find the task and toggle completed status
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                displayTasks();
-                updateStats();
+            // ES6: Arrow functions with ternary operators
+            getPriorityEmoji = (priority) => {
+                const emojis = { high: '🔴', medium: '🟡', low: '🟢' };
+                return emojis[priority] || '⚪';
+            }
+
+            // ES6: Arrow function with Math methods
+            getTimeAgo = (date) => {
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
+                
+                if (diff < 60) return 'Just now';
+                if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+                if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+                return `${Math.floor(diff / 86400)}d ago`;
+            }
+
+            // ES6: Destructuring and computed values
+            updateStats = () => {
+                const { length: total } = this.tasks;
+                const completed = this.tasks.filter(task => task.completed).length;
+                const productivity = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                taskStats.textContent = `${total} tasks • ${completed} completed`;
+                productivityScore.textContent = `Productivity: ${productivity}%`;
+            }
+
+            // ES6: Rest parameters and setTimeout with arrow function
+            showNotification = (message, type = 'info') => {
+                console.log(`${type.toUpperCase()}: ${message}`);
+                // In a real app, you'd show a toast notification here
+            }
+
+            // ES6: Arrow function for filter management
+            setFilter = (filter) => {
+                this.currentFilter = filter;
+                
+                // Update active filter button
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === filter);
+                });
+                
+                this.render();
+            }
+
+            // ES6: Object method shorthand
+            clearCompleted() {
+                this.tasks = this.tasks.filter(task => !task.completed);
+                this.render();
+                this.updateStats();
+                this.showNotification('Completed tasks cleared!', 'info');
+            }
+
+            // ES6: Async/await simulation with Promise
+            async loadSampleTasks() {
+                const sampleTasks = [
+                    { text: 'Learn ES6+ features', priority: 'high' },
+                    { text: 'Build modern JavaScript apps', priority: 'medium' },
+                    { text: 'Practice arrow functions', priority: 'low' },
+                    { text: 'Master async/await', priority: 'high' }
+                ];
+
+                // Simulate loading delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // ES6: forEach with arrow function
+                sampleTasks.forEach(({ text, priority }) => {
+                    this.addTask(text, priority);
+                });
             }
         }
 
-        // Delete task
-        function deleteTask(id) {
-            // Remove task from array
-            tasks = tasks.filter(t => t.id !== id);
-            displayTasks();
-            updateStats();
-        }
+        // ES6: Create instance of class
+        const taskManager = new TaskManager();
 
-        // Update statistics
-        function updateStats() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
-            taskStats.textContent = `${total} tasks • ${completed} completed`;
-        }
-
-        // Event listeners
-        addButton.addEventListener('click', addTask);
-
-        // Add task when Enter key is pressed
-        taskInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addTask();
+        // ES6: Arrow functions for event listeners
+        const handleAddTask = () => {
+            const text = taskInput.value.trim();
+            const priority = prioritySelect.value;
+            
+            if (text) {
+                taskManager.addTask(text, priority);
+                taskInput.value = '';
+                prioritySelect.value = 'medium';
             }
-        });
+        };
 
-        // Focus on input when page loads
-        window.addEventListener('load', function() {
+        // ES6: Arrow function with destructuring
+        const handleKeyPress = (e) => {
+            const { key } = e;
+            if (key === 'Enter') {
+                handleAddTask();
+            }
+        };
+
+        // ES6: Arrow function with event delegation
+        const handleFilterClick = (e) => {
+            const { target } = e;
+            if (target.classList.contains('filter-btn')) {
+                const { filter } = target.dataset;
+                taskManager.setFilter(filter);
+            }
+        };
+
+        // ES6: Event listeners with arrow functions
+        addButton.addEventListener('click', handleAddTask);
+        taskInput.addEventListener('keypress', handleKeyPress);
+
+        // ES6: Event delegation with arrow function
+        document.querySelector('.filter-container').addEventListener('click', handleFilterClick);
+
+        // ES6: Arrow function for window load
+        window.addEventListener('load', () => {
             taskInput.focus();
+            taskManager.updateStats();
+            
+            // Load sample tasks after 2 seconds
+            setTimeout(() => {
+                taskManager.loadSampleTasks();
+            }, 2000);
         });
 
-        // Initialize display
-        displayTasks();
-        updateStats();
+        // ES6: Arrow function for keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            const { key, ctrlKey } = e;
+            
+            // Ctrl+D to clear completed tasks
+            if (ctrlKey && key === 'd') {
+                e.preventDefault();
+                taskManager.clearCompleted();
+            }
+            
+            // Escape to clear input
+            if (key === 'Escape') {
+                taskInput.value = '';
+                taskInput.blur();
+            }
+        });
 
-        // Add some sample tasks for demo (remove this in production)
-        setTimeout(() => {
-            tasks = [
-                { id: taskId++, text: "Learn JavaScript DOM manipulation", completed: true },
-                { id: taskId++, text: "Build a to-do list project", completed: false },
-                { id: taskId++, text: "Practice event handling", completed: false }
-            ];
-            displayTasks();
-            updateStats();
-        }, 1000);
+        // ES6: Console log with template literals
+        console.log(`
+            🚀 ES6+ To-Do List Loaded!
+            
+            Features:
+            • Classes and arrow functions
+            • Template literals and destructuring  
+            • Spread/rest operators
+            • Default parameters
+            • Array methods (map, filter, find)
+            • Let/const instead of var
+            • Modern event handling
+            
+            Keyboard Shortcuts:
+            • Enter: Add task
+            • Ctrl+D: Clear completed
+            • Escape: Clear input
+        `);
     </script>
 </body>
 </html>
